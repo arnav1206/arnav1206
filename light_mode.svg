@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" font-family="ConsolasFallback,Consolas,monospace" width="1180px" height="530px" font-size="16px">
+<style>
+@font-face {
+src: local('Consolas'), local('Consolas Bold');
+font-family: 'ConsolasFallback';
+font-display: swap;
+-webkit-size-adjust: 109%;
+size-adjust: 109%;
+}
+.key {fill: #953800;}
+.value {fill: #0a3069;}
+.addColor {fill: #1a7f37;}
+.delColor {fill: #cf222e;}
+.cc {fill: #c2cfde;}
+text, tspan {white-space: pre;}
+</style>
+<rect width="1180px" height="530px" fill="#f6f8fa" rx="15"/>
+
+    <rect x="15" y="20" width="340" height="2" fill="#0969da">
+        <animate attributeName="y" values="20;508;20" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="5s" repeatCount="indefinite"/>
+    </rect>
+
+    <g transform="translate(15, 20)">
+        <!-- Trunk -->
+        <path d="M170,450 Q190,300 160,150 Q150,100 170,50" fill="none" stroke="#0969da" stroke-width="4" opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1.5s" fill="freeze"/>
+        </path>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.2s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M172,420 Q141.0,410 110,390" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(110, 390) rotate(-45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="95" y="388" text-anchor="end" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2021</text>
+            <text x="95" y="405" text-anchor="end" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2021">0</tspan> commits</text>
+        </g>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.4s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M178,350 Q204.0,360 230,320" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(230, 320) rotate(45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="245" y="318" text-anchor="start" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2022</text>
+            <text x="245" y="335" text-anchor="start" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2022">0</tspan> commits</text>
+        </g>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.6s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M179,280 Q139.5,270 100,250" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(100, 250) rotate(-45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="85" y="248" text-anchor="end" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2023</text>
+            <text x="85" y="265" text-anchor="end" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2023">0</tspan> commits</text>
+        </g>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="0.8s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M172,210 Q206.0,220 240,180" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(240, 180) rotate(45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="255" y="178" text-anchor="start" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2024</text>
+            <text x="255" y="195" text-anchor="start" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2024">0</tspan> commits</text>
+        </g>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="1.0s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M163,140 Q136.5,130 110,110" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(110, 110) rotate(-45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="95" y="108" text-anchor="end" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2025</text>
+            <text x="95" y="125" text-anchor="end" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2025">0</tspan> commits</text>
+        </g>
+
+        <g opacity="0">
+            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="1.2s" fill="freeze"/>
+            <!-- Branch -->
+            <path d="M164,70 Q192.0,80 220,40" fill="none" stroke="#0969da" stroke-width="2"/>
+            <!-- Leaf -->
+            <g transform="translate(220, 40) rotate(45)">
+                <path d="M 0 0 C -8 -8, -8 -20, 0 -25 C 8 -20, 8 -8, 0 0" fill="#2da44e"/>
+            </g>
+            <!-- Text -->
+            <text x="235" y="38" text-anchor="start" fill="#24292f" font-size="14" font-weight="bold" font-family="Courier New, monospace">2026</text>
+            <text x="235" y="55" text-anchor="start" fill="#57606a" font-size="12" font-family="Courier New, monospace"><tspan id="commits_2026">114</tspan> commits</text>
+        </g>
+    </g>
+<text x="390" y="30" fill="#24292f" opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur="1.5s" fill="freeze"/>
+<tspan x="390" y="30">arnav@github</tspan> -———————————————————————————————————————————————————————————————————————-—-
+<tspan x="390" y="50" class="cc">. </tspan><tspan class="key">Title</tspan>:<tspan class="cc"> ..................... </tspan><tspan class="value">AI &amp; Full Stack Software Developer</tspan>
+<tspan x="390" y="70" class="cc">. </tspan><tspan class="key">Uptime</tspan>:<tspan class="cc" id="age_data_dots"> ...................... </tspan><tspan class="value" id="age_data">21 years, 2 months, 15 days</tspan>
+<tspan x="390" y="90" class="cc">. </tspan><tspan class="key">Host</tspan>:<tspan class="cc"> ......................... </tspan><tspan class="value">SRM Institute of Science and Technology</tspan>
+<tspan x="390" y="110" class="cc">. </tspan><tspan class="key">Kernel</tspan>:<tspan class="cc"> ...... </tspan><tspan class="value">B.Tech Computer Science &amp; Engineering</tspan>
+<tspan x="390" y="130" class="cc">. </tspan><tspan class="key">OS</tspan>:<tspan class="cc"> ................................... </tspan><tspan class="value">Windows 11, Linux</tspan>
+<tspan x="390" y="150" class="cc">. </tspan>
+<tspan x="390" y="170" class="cc">. </tspan><tspan class="key">Languages</tspan>.<tspan class="key">Programming</tspan>:<tspan class="cc"> ..... </tspan><tspan class="value">Python, JavaScript, TypeScript, Java, C++, C, SQL</tspan>
+<tspan x="390" y="190" class="cc">. </tspan><tspan class="key">Frameworks</tspan>.<tspan class="key">Web_AI</tspan>:<tspan class="cc"> ..... </tspan><tspan class="value">React, Node.js, Express, TailwindCSS, Vite, FastAPI</tspan>
+<tspan x="390" y="210" class="cc">. </tspan><tspan class="key">AI_&amp;_LLMs</tspan>:<tspan class="cc"> ...................... </tspan><tspan class="value">Google Gemini, Gemma, Groq, NLP, Speech AI</tspan>
+<tspan x="390" y="230" class="cc">. </tspan>
+<tspan x="390" y="250" class="cc">. </tspan><tspan class="key">Focus</tspan>.<tspan class="key">AI</tspan>:<tspan class="cc"> ........... </tspan><tspan class="value">Voice-to-Form AI, Indic Multilingual Models, Agentic AI</tspan>
+<tspan x="390" y="270" class="cc">. </tspan><tspan class="key">Focus</tspan>.<tspan class="key">Systems</tspan>:<tspan class="cc"> ....... </tspan><tspan class="value">Full Stack Web Architecture, REST APIs, Cloud</tspan>
+<tspan x="390" y="290" class="cc">. </tspan><tspan class="key">Featured</tspan>.<tspan class="key">Project</tspan>:<tspan class="cc"> ...... </tspan><tspan class="value">FormMitra (Voice AI Form Assistant)</tspan>
+<tspan x="390" y="310">- Contact</tspan> -———————————————————————————————————————————————————————————————————————-—-
+<tspan x="390" y="330" class="cc">. </tspan><tspan class="key">Email</tspan>.<tspan class="key">GitHub</tspan>:<tspan class="cc"> .......... </tspan><tspan class="value">arnav1206@github.com</tspan>
+<tspan x="390" y="350" class="cc">. </tspan><tspan class="key">GitHub</tspan>:<tspan class="cc"> ...................................... </tspan><tspan class="value">arnav1206</tspan>
+<tspan x="390" y="370" class="cc">. </tspan><tspan class="key">LinkedIn</tspan>:<tspan class="cc"> .................................... </tspan><tspan class="value">arnav1206</tspan>
+<tspan x="390" y="390" class="cc">. </tspan><tspan class="key">Web</tspan>:<tspan class="cc"> ................... </tspan><tspan class="value">formitra.vercel.app</tspan>
+<tspan x="390" y="450">- GitHub Stats</tspan> -———————————————————————————————————————————————————————————————————————-—-
+<tspan x="390" y="470" class="cc">. </tspan><tspan class="key">Repos</tspan>:<tspan class="cc" id="repo_data_dots"> ..... </tspan><tspan class="value" id="repo_data">5</tspan> {<tspan class="key">Contributed</tspan>: <tspan class="value" id="contrib_data">5</tspan>} | <tspan class="key">Stars</tspan>:<tspan class="cc" id="star_data_dots"> ............ </tspan><tspan class="value" id="star_data">1</tspan>
+<tspan x="390" y="490" class="cc">. </tspan><tspan class="key">Commits</tspan>:<tspan class="cc" id="commit_data_dots"> ................. </tspan><tspan class="value" id="commit_data">114</tspan> | <tspan class="key">Followers</tspan>:<tspan class="cc" id="follower_data_dots"> ........ </tspan><tspan class="value" id="follower_data">0</tspan>
+<tspan x="390" y="510" class="cc">. </tspan><tspan class="key">Lines of Code on GitHub</tspan>:<tspan class="cc" id="loc_data_dots"> ... </tspan><tspan class="value" id="loc_data">25,480</tspan> ( <tspan class="addColor" id="loc_add">28,120</tspan><tspan class="addColor">++</tspan>, <tspan id="loc_del_dots">. </tspan><tspan class="delColor" id="loc_del">2,640</tspan><tspan class="delColor">--</tspan> ) <tspan fill="#0969da">█<animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="indefinite"/></tspan>
+</text>
+</svg>

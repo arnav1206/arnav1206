@@ -1,0 +1,39 @@
+name: README build
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Configure pip cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/cache/requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: python -m pip install -r cache/requirements.txt
+      - name: Update README SVGs
+        env:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python today.py
+      - name: Commit & Push Changes
+        run: |-
+          git config --global user.email "arnav1206@github.com"
+          git config --global user.name "arnav1206"
+          git add .
+          git commit -m "Automated Profile README Update" -a || echo "No changes to commit"
+          git push
