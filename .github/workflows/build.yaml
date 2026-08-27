@@ -32,8 +32,8 @@ jobs:
         run: python today.py
       - name: Commit & Push Changes
         run: |-
-          git config --global user.email "arnav1206@github.com"
-          git config --global user.name "arnav1206"
+          git config --global user.email "arnavgoel1206@gmail.com"
+          git config --global user.name "Arnav Goel"
           git add .
           git commit -m "Automated Profile README Update" -a || echo "No changes to commit"
           git push
