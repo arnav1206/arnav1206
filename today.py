@@ -178,6 +178,17 @@ def find_and_replace(root, element_id, new_text):
         element.text = new_text
 
 
+
+def update_readme_cache_buster():
+    if os.path.exists('README.md'):
+        with open('README.md', 'r', encoding='utf-8') as f:
+            content = f.read()
+        ts = int(time.time())
+        content = re.sub(r'(\.svg)(\?v=\d+)?', f'\1?v={ts}', content)
+        with open('README.md', 'w', encoding='utf-8') as f:
+            f.write(content)
+
+
 if __name__ == '__main__':
     print("Updating GitHub Profile README SVG stats...")
     
@@ -229,4 +240,5 @@ if __name__ == '__main__':
     if os.path.exists('light_mode.svg'):
         svg_overwrite('light_mode.svg', age_data, total_commits if total_commits > 0 else 114, star_count, repo_count, contrib_count, follower_count, loc_data, yearly_commits)
 
+    update_readme_cache_buster()
     print("Profile README SVGs updated successfully!")
