@@ -142,6 +142,7 @@ def query_count(funct_id):
 def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib_data, follower_data, loc_data, yearly_commits=None):
     tree = etree.parse(filename)
     root = tree.getroot()
+    find_and_replace(root, 'age_data', age_data)
     justify_format(root, 'commit_data', commit_data, 20)
     justify_format(root, 'star_data', star_data, 13)
     justify_format(root, 'repo_data', repo_data, 6)
@@ -181,7 +182,7 @@ if __name__ == '__main__':
     print("Updating GitHub Profile README SVG stats...")
     
     # 1. Age / Uptime calculation (Arnav's estimated birth date or start date)
-    age_data = daily_readme(datetime.datetime(2004, 12, 6))
+    age_data = daily_readme(datetime.datetime(2006, 6, 12))
 
     # 2. Query GitHub Stats
     yearly_commits = {}
