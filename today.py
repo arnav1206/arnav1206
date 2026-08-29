@@ -14,7 +14,11 @@ QUERY_COUNT = {'user_getter': 0, 'follower_getter': 0, 'graph_repos_stars': 0, '
 
 
 def daily_readme(birthday):
-    diff = relativedelta.relativedelta(datetime.datetime.today(), birthday)
+    # Use IST (UTC+5:30) so the day transitions accurately in the user's timezone
+    ist = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    now = datetime.datetime.now(ist)
+    birth_date = birthday.date() if isinstance(birthday, datetime.datetime) else birthday
+    diff = relativedelta.relativedelta(now.date(), birth_date)
     return '{} {}, {} {}, {} {}{}'.format(
         diff.years, 'year' + format_plural(diff.years),
         diff.months, 'month' + format_plural(diff.months),
