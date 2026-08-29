@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: "0 4 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,12 +32,12 @@ jobs:
         run: python -m pip install -r cache/requirements.txt
       - name: Update README SVGs
         env:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
         run: python today.py
       - name: Commit & Push Changes
         run: |-
           git config --global user.email "arnavgoel1206@gmail.com"
           git config --global user.name "Arnav Goel"
-          git add .
-          git commit -m "Automated Profile README Update" -a || echo "No changes to commit"
-          git push
+          git add dark_mode.svg light_mode.svg README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Automated Profile README Update" && git push)
+

@@ -2,13 +2,14 @@ import datetime
 from dateutil import relativedelta
 import requests
 import os
+import re
 from lxml import etree
 import time
 import hashlib
 
 USER_NAME = 'arnav1206'
 TOKEN = os.environ.get('ACCESS_TOKEN') or os.environ.get('GITHUB_TOKEN', '')
-HEADERS = {'authorization': 'token ' + TOKEN} if TOKEN else {}
+HEADERS = {'Authorization': f'Bearer {TOKEN}'} if TOKEN else {}
 QUERY_COUNT = {'user_getter': 0, 'follower_getter': 0, 'graph_repos_stars': 0, 'recursive_loc': 0, 'graph_commits': 0, 'loc_query': 0}
 
 
@@ -28,10 +29,21 @@ def format_plural(unit):
 def simple_request(func_name, query, variables):
     if not TOKEN:
         return None
-    request = requests.post('https://api.github.com/graphql', json={'query': query, 'variables': variables}, headers=HEADERS)
-    if request.status_code == 200:
-        return request
-    print(f"{func_name} GraphQL request failed ({request.status_code}): {request.text}")
+    try:
+        request = requests.post(
+            'https://api.github.com/graphql',
+            json={'query': query, 'variables': variables},
+            headers={'Authorization': f'Bearer {TOKEN}', 'User-Agent': f'{USER_NAME}-readme-bot'},
+            timeout=15
+        )
+        if request.status_code == 200:
+            res_json = request.json()
+            if 'errors' in res_json:
+                print(f"{func_name} GraphQL warnings/errors: {res_json['errors']}")
+            return res_json
+        print(f"{func_name} GraphQL request failed ({request.status_code}): {request.text}")
+    except Exception as e:
+        print(f"{func_name} request error: {e}")
     return None
 
 
@@ -48,21 +60,24 @@ def graph_commits(start_date, end_date):
         }
     }'''
     variables = {'start_date': start_date, 'end_date': end_date, 'login': USER_NAME}
-    request = simple_request(graph_commits.__name__, query, variables)
-    if request:
+    res_json = simple_request(graph_commits.__name__, query, variables)
+    if res_json:
         try:
-            return int(request.json()['data']['user']['contributionsCollection']['contributionCalendar']['totalContributions'])
-        except Exception:
+            user_data = res_json.get('data', {}).get('user')
+            if user_data and 'contributionsCollection' in user_data:
+                return int(user_data['contributionsCollection']['contributionCalendar']['totalContributions'])
+        except Exception as e:
+            print(f"Error parsing graph_commits: {e}")
             return 0
     return 0
 
 
-def graph_repos_stars(count_type, owner_affiliation, cursor=None):
+def graph_repos_stars(count_type, owner_affiliation):
     query_count('graph_repos_stars')
     query = '''
-    query ($owner_affiliation: [RepositoryAffiliation], $login: String!, $cursor: String) {
+    query ($owner_affiliation: [RepositoryAffiliation], $login: String!) {
         user(login: $login) {
-            repositories(first: 100, after: $cursor, ownerAffiliations: $owner_affiliation) {
+            repositories(first: 100, ownerAffiliations: $owner_affiliation) {
                 totalCount
                 edges {
                     node {
@@ -74,27 +89,28 @@ def graph_repos_stars(count_type, owner_affiliation, cursor=None):
                         }
                     }
                 }
-                pageInfo {
-                    endCursor
-                    hasNextPage
-                }
             }
         }
     }'''
-    variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME, 'cursor': cursor}
-    request = simple_request(graph_repos_stars.__name__, query, variables)
-    if request and request.status_code == 200:
-        if count_type == 'repos':
-            return request.json()['data']['user']['repositories']['totalCount']
-        elif count_type == 'stars':
-            return stars_counter(request.json()['data']['user']['repositories']['edges'])
-    return 0
+    variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME}
+    res_json = simple_request(graph_repos_stars.__name__, query, variables)
+    if res_json:
+        try:
+            user_data = res_json.get('data', {}).get('user')
+            if user_data and 'repositories' in user_data:
+                if count_type == 'repos':
+                    return user_data['repositories'].get('totalCount', 0)
+                elif count_type == 'stars':
+                    return stars_counter(user_data['repositories'].get('edges', []))
+        except Exception as e:
+            print(f"Error parsing graph_repos_stars: {e}")
+    return None
 
 
 def stars_counter(data):
     total_stars = 0
     for node in data:
-        total_stars += node['node']['stargazers']['totalCount']
+        total_stars += node.get('node', {}).get('stargazers', {}).get('totalCount', 0)
     return total_stars
 
 
@@ -108,11 +124,11 @@ def user_getter(username):
         }
     }'''
     variables = {'login': username}
-    request = simple_request(user_getter.__name__, query, variables)
-    if request and request.status_code == 200:
-        data = request.json().get('data', {}).get('user')
+    res_json = simple_request(user_getter.__name__, query, variables)
+    if res_json:
+        data = res_json.get('data', {}).get('user')
         if data:
-            return {'id': data['id']}, data['createdAt']
+            return {'id': data.get('id', '')}, data.get('createdAt', '2021-10-22T15:30:41Z')
     return {'id': ''}, '2021-10-22T15:30:41Z'
 
 
@@ -126,12 +142,12 @@ def follower_getter(username):
             }
         }
     }'''
-    request = simple_request(follower_getter.__name__, query, {'login': username})
-    if request and request.status_code == 200:
-        data = request.json().get('data', {}).get('user')
-        if data:
-            return int(data['followers']['totalCount'])
-    return 0
+    res_json = simple_request(follower_getter.__name__, query, {'login': username})
+    if res_json:
+        data = res_json.get('data', {}).get('user')
+        if data and 'followers' in data:
+            return int(data['followers'].get('totalCount', 0))
+    return None
 
 
 def query_count(funct_id):
@@ -178,58 +194,88 @@ def find_and_replace(root, element_id, new_text):
         element.text = new_text
 
 
-
 def update_readme_cache_buster():
     if os.path.exists('README.md'):
         with open('README.md', 'r', encoding='utf-8') as f:
             content = f.read()
         ts = int(time.time())
-        content = re.sub(r'(\.svg)(\?v=\d+)?', f'\1?v={ts}', content)
+        content = re.sub(r'(\.svg)(\?v=\d+)?', rf'\g<1>?v={ts}', content)
         with open('README.md', 'w', encoding='utf-8') as f:
             f.write(content)
+
+
+def fetch_rest_stats():
+    """Fallback to public REST API if GraphQL or token fails."""
+    repo_count = 5
+    follower_count = 0
+    star_count = 1
+    headers = {'User-Agent': f'{USER_NAME}-readme-bot'}
+    if TOKEN:
+        headers['Authorization'] = f'Bearer {TOKEN}'
+    try:
+        u_res = requests.get(f"https://api.github.com/users/{USER_NAME}", headers=headers, timeout=10)
+        if u_res.status_code == 200:
+            ud = u_res.json()
+            repo_count = ud.get('public_repos', 5)
+            follower_count = ud.get('followers', 0)
+    except Exception as e:
+        print(f"REST user query error: {e}")
+
+    try:
+        r_res = requests.get(f"https://api.github.com/users/{USER_NAME}/repos?per_page=100", headers=headers, timeout=10)
+        if r_res.status_code == 200:
+            repos = r_res.json()
+            if isinstance(repos, list):
+                star_count = sum(r.get('stargazers_count', 0) for r in repos)
+    except Exception as e:
+        print(f"REST repos query error: {e}")
+
+    contrib_count = repo_count
+    return repo_count, contrib_count, star_count, follower_count
 
 
 if __name__ == '__main__':
     print("Updating GitHub Profile README SVG stats...")
     
-    # 1. Age / Uptime calculation (Arnav's estimated birth date or start date)
+    # 1. Age / Uptime calculation
     age_data = daily_readme(datetime.datetime(2006, 6, 12))
 
     # 2. Query GitHub Stats
     yearly_commits = {}
     total_commits = 0
+    current_year = datetime.datetime.now().year
+
+    repo_count = None
+    contrib_count = None
+    star_count = None
+    follower_count = None
 
     if TOKEN:
         try:
-            user_data = user_getter(USER_NAME)
             repo_count = graph_repos_stars('repos', ['OWNER'])
             contrib_count = graph_repos_stars('repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
             star_count = graph_repos_stars('stars', ['OWNER'])
             follower_count = follower_getter(USER_NAME)
 
-            for year in range(2021, 2027):
+            for year in range(2021, current_year + 1):
                 start_date = f"{year}-01-01T00:00:00Z"
                 end_date = f"{year}-12-31T23:59:59Z"
                 commits = graph_commits(start_date, end_date)
                 yearly_commits[year] = commits
                 total_commits += commits
         except Exception as e:
-            print("Error querying GraphQL:", e)
-            repo_count, contrib_count, star_count, follower_count = 5, 5, 1, 0
-    else:
-        # Fallback to public REST API if no token
-        try:
-            req = requests.get(f"https://api.github.com/users/{USER_NAME}")
-            if req.status_code == 200:
-                ud = req.json()
-                repo_count = ud.get('public_repos', 5)
-                contrib_count = repo_count
-                follower_count = ud.get('followers', 0)
-            else:
-                repo_count, contrib_count, follower_count = 5, 5, 0
-        except Exception:
-            repo_count, contrib_count, follower_count = 5, 5, 0
-        star_count = 1
+            print("GraphQL query exception:", e)
+
+    # Fallback to REST API if GraphQL queries returned None or TOKEN is missing
+    if any(v is None for v in [repo_count, contrib_count, star_count, follower_count]):
+        rest_repos, rest_contribs, rest_stars, rest_followers = fetch_rest_stats()
+        repo_count = repo_count if repo_count is not None else rest_repos
+        contrib_count = contrib_count if contrib_count is not None else rest_contribs
+        star_count = star_count if star_count is not None else rest_stars
+        follower_count = follower_count if follower_count is not None else rest_followers
+
+    if not yearly_commits or total_commits == 0:
+        # Default baseline if commit queries unavailable
         yearly_commits = {2021: 0, 2022: 0, 2023: 0, 2024: 0, 2025: 0, 2026: 114}
         total_commits = sum(yearly_commits.values())
 
@@ -242,3 +288,4 @@ if __name__ == '__main__':
 
     update_readme_cache_buster()
     print("Profile README SVGs updated successfully!")
+
