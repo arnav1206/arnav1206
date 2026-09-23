@@ -238,6 +238,60 @@ def fetch_rest_stats():
     return repo_count, contrib_count, star_count, follower_count
 
 
+def get_lines_of_code():
+    """Fetch total lines of code added and deleted across all user's repositories."""
+    query_count('loc_query')
+    total_additions = 0
+    total_deletions = 0
+    headers = {'User-Agent': f'{USER_NAME}-readme-bot'}
+    if TOKEN:
+        headers['Authorization'] = f'Bearer {TOKEN}'
+
+    try:
+        repos_url = f"https://api.github.com/users/{USER_NAME}/repos?per_page=100"
+        repos_res = requests.get(repos_url, headers=headers, timeout=15)
+        if repos_res.status_code != 200:
+            print(f"Failed to fetch repos for LOC: {repos_res.status_code}")
+            return ['28,120', '2,640', '25,480'] # Fallback
+
+        repos = repos_res.json()
+        for repo in repos:
+            if repo.get('fork') or not repo.get('owner', {}).get('login'):
+                continue
+            
+            repo_name = repo['name']
+            owner = repo['owner']['login']
+            stats_url = f"https://api.github.com/repos/{owner}/{repo_name}/stats/contributors"
+            
+            # Retry logic for 202 Accepted
+            retries = 3
+            stats = None
+            for _ in range(retries):
+                stats_res = requests.get(stats_url, headers=headers, timeout=15)
+                if stats_res.status_code == 200:
+                    stats = stats_res.json()
+                    break
+                elif stats_res.status_code == 202:
+                    time.sleep(2) # Wait for GitHub to compute stats
+                else:
+                    break
+            
+            if stats and isinstance(stats, list):
+                for contributor in stats:
+                    if contributor.get('author') and contributor['author'].get('login', '').lower() == USER_NAME.lower():
+                        for week in contributor.get('weeks', []):
+                            total_additions += week.get('a', 0)
+                            total_deletions += week.get('d', 0)
+    except Exception as e:
+        print(f"Error fetching lines of code: {e}")
+        return ['28,120', '2,640', '25,480'] # Fallback on error
+        
+    total_loc = total_additions - total_deletions
+    # Return formatted strings as expected by svg_overwrite
+    return [f"{total_additions:,}", f"{total_deletions:,}", f"{total_loc:,}"]
+
+
+
 if __name__ == '__main__':
     print("Updating GitHub Profile README SVG stats...")
     
@@ -283,7 +337,8 @@ if __name__ == '__main__':
         yearly_commits = {2021: 0, 2022: 0, 2023: 0, 2024: 0, 2025: 0, 2026: 114}
         total_commits = sum(yearly_commits.values())
 
-    loc_data = ['28,120', '2,640', '25,480']
+    print("Fetching Lines of Code...")
+    loc_data = get_lines_of_code()
 
     if os.path.exists('dark_mode.svg'):
         svg_overwrite('dark_mode.svg', age_data, total_commits if total_commits > 0 else 114, star_count, repo_count, contrib_count, follower_count, loc_data, yearly_commits)
