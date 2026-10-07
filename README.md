@@ -1,6 +1,6 @@
 <a href="https://github.com/arnav1206/arnav1206">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/arnav1206/arnav1206/main/dark_mode.svg?v=1791330075">
-    <img alt="Arnav's GitHub Profile README" src="https://raw.githubusercontent.com/arnav1206/arnav1206/main/light_mode.svg?v=1791330075">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/arnav1206/arnav1206/main/dark_mode.svg?v=1791350465">
+    <img alt="Arnav's GitHub Profile README" src="https://raw.githubusercontent.com/arnav1206/arnav1206/main/light_mode.svg?v=1791350465">
   </picture>
 </a>
